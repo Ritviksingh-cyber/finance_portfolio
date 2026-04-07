@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1, "name": "HDFC Bank", "sector": "Financial",
+    "purchasePrice": 1490, "qty": 50,
+    "nseBse": "HDFCBANK", "exchange": "NSE", "fallbackCmp": 1700.15
+  },
+  {
+    "id": 2, "name": "Bajaj Finance", "sector": "Financial",
+    "purchasePrice": 6466, "qty": 15,
+    "nseBse": "BAJFINANCE", "exchange": "NSE", "fallbackCmp": 8419.6
+  },
+  {
+    "id": 3, "name": "ICICI Bank", "sector": "Financial",
+    "purchasePrice": 780, "qty": 84,
+    "nseBse": "532174", "exchange": "BSE", "fallbackCmp": 1215.5
+  },
+  {
+    "id": 4, "name": "Bajaj Housing", "sector": "Financial",
+    "purchasePrice": 130, "qty": 504,
+    "nseBse": "544252", "exchange": "BSE", "fallbackCmp": 112.85
+  },
+  {
+    "id": 5, "name": "Savani Financials", "sector": "Financial",
+    "purchasePrice": 24, "qty": 1080,
+    "nseBse": "511577", "exchange": "BSE", "fallbackCmp": 14.86
+  },
+  {
+    "id": 6, "name": "Affle India", "sector": "Technology",
+    "purchasePrice": 1151, "qty": 50,
+    "nseBse": "AFFLE", "exchange": "NSE", "fallbackCmp": 1459.6
+  },
+  {
+    "id": 7, "name": "LTI Mindtree", "sector": "Technology",
+    "purchasePrice": 4775, "qty": 16,
+    "nseBse": "LTIM", "exchange": "NSE", "fallbackCmp": 4793.8
+  },
+  {
+    "id": 8, "name": "KPIT Tech", "sector": "Technology",
+    "purchasePrice": 672, "qty": 61,
+    "nseBse": "542651", "exchange": "BSE", "fallbackCmp": 1293.1
+  },
+  {
+    "id": 9, "name": "Tata Tech", "sector": "Technology",
+    "purchasePrice": 1072, "qty": 63,
+    "nseBse": "544028", "exchange": "BSE", "fallbackCmp": 662
+  },
+  {
+    "id": 10, "name": "BLS E-Services", "sector": "Technology",
+    "purchasePrice": 232, "qty": 191,
+    "nseBse": "544107", "exchange": "BSE", "fallbackCmp": 152.9
+  },
+  {
+    "id": 11, "name": "Tanla", "sector": "Technology",
+    "purchasePrice": 1134, "qty": 45,
+    "nseBse": "532790", "exchange": "BSE", "fallbackCmp": 449.5
+  },
+  {
+    "id": 12, "name": "Dmart", "sector": "Consumer",
+    "purchasePrice": 3777, "qty": 27,
+    "nseBse": "DMART", "exchange": "NSE", "fallbackCmp": 3451.1
+  },
+  {
+    "id": 13, "name": "Tata Consumer", "sector": "Consumer",
+    "purchasePrice": 845, "qty": 90,
+    "nseBse": "532540", "exchange": "BSE", "fallbackCmp": 961.1
+  },
+  {
+    "id": 14, "name": "Pidilite", "sector": "Consumer",
+    "purchasePrice": 2376, "qty": 36,
+    "nseBse": "500331", "exchange": "BSE", "fallbackCmp": 2730
+  },
+  {
+    "id": 15, "name": "Tata Power", "sector": "Power",
+    "purchasePrice": 224, "qty": 225,
+    "nseBse": "500400", "exchange": "BSE", "fallbackCmp": 351
+  },
+  {
+    "id": 16, "name": "KPI Green", "sector": "Power",
+    "purchasePrice": 875, "qty": 50,
+    "nseBse": "542323", "exchange": "BSE", "fallbackCmp": 402.4
+  },
+  {
+    "id": 17, "name": "Suzlon", "sector": "Power",
+    "purchasePrice": 44, "qty": 450,
+    "nseBse": "532667", "exchange": "BSE", "fallbackCmp": 51.36
+  },
+  {
+    "id": 18, "name": "Gensol", "sector": "Power",
+    "purchasePrice": 998, "qty": 45,
+    "nseBse": "542851", "exchange": "BSE", "fallbackCmp": 372.6
+  },
+  {
+    "id": 19, "name": "Hariom Pipes", "sector": "Others",
+    "purchasePrice": 580, "qty": 60,
+    "nseBse": "543517", "exchange": "BSE", "fallbackCmp": 355.75
+  },
+  {
+    "id": 20, "name": "Astral", "sector": "Others",
+    "purchasePrice": 1517, "qty": 56,
+    "nseBse": "ASTRAL", "exchange": "NSE", "fallbackCmp": 1317.6
+  },
+  {
+    "id": 21, "name": "Polycab", "sector": "Others",
+    "purchasePrice": 2818, "qty": 28,
+    "nseBse": "542652", "exchange": "BSE", "fallbackCmp": 5000
+  },
+  {
+    "id": 22, "name": "Clean Science", "sector": "Others",
+    "purchasePrice": 1610, "qty": 32,
+    "nseBse": "543318", "exchange": "BSE", "fallbackCmp": 1237.45
+  },
+  {
+    "id": 23, "name": "Deepak Nitrite", "sector": "Others",
+    "purchasePrice": 2248, "qty": 27,
+    "nseBse": "506401", "exchange": "BSE", "fallbackCmp": 1927.9
+  },
+  {
+    "id": 24, "name": "Fine Organic", "sector": "Others",
+    "purchasePrice": 4284, "qty": 16,
+    "nseBse": "541557", "exchange": "BSE", "fallbackCmp": 3743
+  },
+  {
+    "id": 25, "name": "Gravita", "sector": "Others",
+    "purchasePrice": 2037, "qty": 8,
+    "nseBse": "533282", "exchange": "BSE", "fallbackCmp": 1614.2
+  },
+  {
+    "id": 26, "name": "SBI Life", "sector": "Others",
+    "purchasePrice": 1197, "qty": 49,
+    "nseBse": "540719", "exchange": "BSE", "fallbackCmp": 1405.45
+  }
+]
