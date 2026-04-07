@@ -1,51 +1,49 @@
 import { NextResponse } from 'next/server';
-import yahooFinance from 'yahoo-finance2';
-import portfolio from '@/data/portfolio.json';
+import { YahooFinance } from 'yahoo-finance2';
+import data from '@/data/portfolio.json';
 import { getYahooTicker } from '@/lib/utils';
 import { Stock } from '@/types/portfolio';
 
+const yahooFinance = new YahooFinance();
+yahooFinance.suppressNotices(['yahooSurvey']);
+
 let cache: any = null;
-let lastFetch = 0;
+let lastTime = 0;
 
 export async function GET() {
   const now = Date.now();
 
-  if (cache && now - lastFetch < 15000) {
+  if (cache && now - lastTime < 15000) {
     return NextResponse.json(cache);
   }
 
-  const stocks = portfolio as Stock[];
+  const stocks = data as Stock[];
 
   const results = await Promise.allSettled(
     stocks.map(async (stock) => {
       const ticker = getYahooTicker(stock);
 
       try {
-        const quote = await yahooFinance.quote(ticker);
+        const res = await yahooFinance.quote(ticker);
 
         return {
           id: stock.id,
-          cmp: quote.regularMarketPrice ?? stock.fallbackCmp,
-          peRatio: quote.trailingPE ?? null,
-          eps: quote.epsTrailingTwelveMonths ?? null,
+          cmp: res.regularMarketPrice ?? stock.fallbackCmp,
+          peRatio: res.trailingPE ?? null,
+          eps: res.epsTrailingTwelveMonths ?? null,
         };
-      } catch {
+      } catch (err) {
+        console.error(`Failed for ticker ${ticker}:`, err);
         return {
           id: stock.id,
+          ticker,
           cmp: stock.fallbackCmp,
           peRatio: null,
           eps: null,
+          error: 'fetch_failed',
         };
       }
     })
   );
 
-  const data = results
-    .map((r) => (r.status === 'fulfilled' ? r.value : null))
-    .filter(Boolean);
-
-  cache = data;
-  lastFetch = now;
-
-  return NextResponse.json(data);
-}
+  const cl

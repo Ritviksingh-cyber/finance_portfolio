@@ -1,56 +1,66 @@
 import { Stock, SectorGroup } from '@/types/portfolio';
 
+// map ticker to yahoo format (NSE -> .NS, BSE -> .BO)
 export function getYahooTicker(stock: Stock): string {
-  return stock.exchange === 'NSE'
-    ? `${stock.nseBse}.NS`
-    : `${stock.nseBse}.BO`;
+  if (stock.exchange === 'NSE') {
+    return `${stock.nseBse}.NS`;
+  }
+  return `${stock.nseBse}.BO`;
 }
 
+// add live + calculated fields
 export function enrichStock(stock: Stock, cmp: number): Stock {
   const investment = stock.purchasePrice * stock.qty;
-  const presentValue = cmp * stock.qty;
-  const gainLoss = presentValue - investment;
+  const currentValue = cmp * stock.qty;
+
+  // simple gain/loss calc
+  const gain = currentValue - investment;
 
   return {
     ...stock,
     cmp,
-    presentValue,
-    gainLoss,
-    gainLossPercent: (gainLoss / investment) * 100,
+    presentValue: currentValue,
+    gainLoss: gain,
+    gainLossPercent: (gain / investment) * 100,
   };
 }
 
+// add portfolio weight
 export function addPortfolioPercent(stocks: Stock[]): Stock[] {
-  const total = stocks.reduce(
+  const totalInvestment = stocks.reduce(
     (sum, s) => sum + s.purchasePrice * s.qty,
     0
   );
 
   return stocks.map((s) => {
-    const investment = s.purchasePrice * s.qty;
+    const inv = s.purchasePrice * s.qty;
 
     return {
       ...s,
-      portfolioPercent: (investment / total) * 100,
+      portfolioPercent: (inv / totalInvestment) * 100,
     };
   });
 }
 
+// group stocks by sector
 export function groupBySector(stocks: Stock[]): SectorGroup[] {
   const map = new Map<string, Stock[]>();
 
-  stocks.forEach((s) => {
-    if (!map.has(s.sector)) map.set(s.sector, []);
-    map.get(s.sector)!.push(s);
-  });
+  for (const stock of stocks) {
+    if (!map.has(stock.sector)) {
+      map.set(stock.sector, []);
+    }
+    map.get(stock.sector)!.push(stock);
+  }
 
-  return Array.from(map.entries()).map(([sector, stocks]) => {
-    const totalInvestment = stocks.reduce(
+  return Array.from(map.entries()).map(([sector, items]) => {
+    const totalInvestment = items.reduce(
       (sum, s) => sum + s.purchasePrice * s.qty,
       0
     );
 
-    const totalPresentValue = stocks.reduce(
+    // fallback to old cmp if live not present
+    const totalValue = items.reduce(
       (sum, s) =>
         sum + (s.presentValue ?? s.fallbackCmp * s.qty),
       0
@@ -58,14 +68,15 @@ export function groupBySector(stocks: Stock[]): SectorGroup[] {
 
     return {
       sector,
-      stocks,
+      stocks: items,
       totalInvestment,
-      totalPresentValue,
-      totalGainLoss: totalPresentValue - totalInvestment,
+      totalPresentValue: totalValue,
+      totalGainLoss: totalValue - totalInvestment,
     };
   });
 }
 
+// helper for ₹ formatting
 export function formatINR(value: number) {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',

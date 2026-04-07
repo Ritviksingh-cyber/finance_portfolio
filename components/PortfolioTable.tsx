@@ -16,31 +16,38 @@ export default function PortfolioTable({
 }) {
   const columns: ColumnDef<Stock>[] = [
     { header: 'Stock', accessorKey: 'name' },
+
     {
       header: 'Buy Price',
       accessorKey: 'purchasePrice',
       cell: ({ getValue }) =>
         `₹${getValue<number>().toLocaleString('en-IN')}`,
     },
+
     { header: 'Qty', accessorKey: 'qty' },
+
     {
       header: 'Investment',
       accessorFn: (row) => row.purchasePrice * row.qty,
       cell: ({ getValue }) => formatINR(getValue<number>()),
     },
+
     {
       header: 'Portfolio %',
       accessorKey: 'portfolioPercent',
       cell: ({ getValue }) =>
         `${getValue<number>()?.toFixed(2)}%`,
     },
+
     { header: 'Code', accessorKey: 'nseBse' },
+
     {
       header: 'CMP',
       accessorKey: 'cmp',
       cell: ({ getValue, row }) =>
         formatINR(getValue<number>() ?? row.original.fallbackCmp),
     },
+
     {
       header: 'Present Value',
       accessorKey: 'presentValue',
@@ -50,24 +57,32 @@ export default function PortfolioTable({
             row.original.fallbackCmp * row.original.qty
         ),
     },
+
     {
       header: 'Gain/Loss',
       accessorKey: 'gainLoss',
       cell: ({ getValue }) => {
         const val = getValue<number>() ?? 0;
+
         return (
-          <span className={val >= 0 ? 'text-green-600' : 'text-red-600'}>
+          <span
+            className={
+              val >= 0 ? 'text-green-600' : 'text-red-600'
+            }
+          >
             {formatINR(val)}
           </span>
         );
       },
     },
+
     {
       header: 'P/E',
       accessorKey: 'peRatio',
       cell: ({ getValue }) =>
         getValue<number | null>()?.toFixed(2) ?? '—',
     },
+
     {
       header: 'EPS',
       accessorKey: 'eps',
@@ -82,6 +97,7 @@ export default function PortfolioTable({
     <div>
       <div className="flex justify-between mb-4">
         <h1 className="text-xl font-bold">Portfolio Dashboard</h1>
+
         <div className="text-sm text-gray-500">
           {isLoading && 'Refreshing...'}
           {lastUpdated && (
@@ -103,12 +119,8 @@ export default function PortfolioTable({
           </thead>
 
           <tbody>
-            {groups.map((group) => (
-              <SectorSection
-                key={group.sector}
-                group={group}
-                columns={columns}
-              />
+            {groups.map((g) => (
+              <SectorSection key={g.sector} group={g} columns={columns} />
             ))}
           </tbody>
         </table>
