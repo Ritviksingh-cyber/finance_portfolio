@@ -1,6 +1,5 @@
 import { Stock, SectorGroup } from '@/types/portfolio';
 
-// map ticker to yahoo format (NSE -> .NS, BSE -> .BO)
 export function getYahooTicker(stock: Stock): string {
   if (stock.exchange === 'NSE') {
     return `${stock.nseBse}.NS`;
@@ -8,76 +7,59 @@ export function getYahooTicker(stock: Stock): string {
   return `${stock.nseBse}.BO`;
 }
 
-// add live + calculated fields
 export function enrichStock(stock: Stock, cmp: number): Stock {
+  const presentValue = cmp * stock.qty;
   const investment = stock.purchasePrice * stock.qty;
-  const currentValue = cmp * stock.qty;
-
-  // simple gain/loss calc
-  const gain = currentValue - investment;
-
   return {
     ...stock,
     cmp,
-    presentValue: currentValue,
-    gainLoss: gain,
-    gainLossPercent: (gain / investment) * 100,
+    presentValue,
+    gainLoss: presentValue - investment,
+    gainLossPercent: ((presentValue - investment) / investment) * 100,
   };
 }
 
-// add portfolio weight
 export function addPortfolioPercent(stocks: Stock[]): Stock[] {
-  const totalInvestment = stocks.reduce(
+  const total = stocks.reduce(
     (sum, s) => sum + s.purchasePrice * s.qty,
     0
   );
-
-  return stocks.map((s) => {
-    const inv = s.purchasePrice * s.qty;
-
-    return {
-      ...s,
-      portfolioPercent: (inv / totalInvestment) * 100,
-    };
-  });
+  return stocks.map((s) => ({
+    ...s,
+    portfolioPercent: total > 0
+      ? ((s.purchasePrice * s.qty) / total) * 100
+      : 0,
+  }));
 }
 
-// group stocks by sector
 export function groupBySector(stocks: Stock[]): SectorGroup[] {
   const map = new Map<string, Stock[]>();
 
   for (const stock of stocks) {
-    if (!map.has(stock.sector)) {
-      map.set(stock.sector, []);
-    }
+    if (!map.has(stock.sector)) map.set(stock.sector, []);
     map.get(stock.sector)!.push(stock);
   }
 
-  return Array.from(map.entries()).map(([sector, items]) => {
-    const totalInvestment = items.reduce(
+  return Array.from(map.entries()).map(([sector, sectorStocks]) => {
+    const totalInvestment = sectorStocks.reduce(
       (sum, s) => sum + s.purchasePrice * s.qty,
       0
     );
-
-    // fallback to old cmp if live not present
-    const totalValue = items.reduce(
-      (sum, s) =>
-        sum + (s.presentValue ?? s.fallbackCmp * s.qty),
+    const totalPresentValue = sectorStocks.reduce(
+      (sum, s) => sum + (s.presentValue ?? s.fallbackCmp * s.qty),
       0
     );
-
     return {
       sector,
-      stocks: items,
+      stocks: sectorStocks,
       totalInvestment,
-      totalPresentValue: totalValue,
-      totalGainLoss: totalValue - totalInvestment,
+      totalPresentValue,
+      totalGainLoss: totalPresentValue - totalInvestment,
     };
   });
 }
 
-// helper for ₹ formatting
-export function formatINR(value: number) {
+export function formatINR(value: number): string {
   return new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',

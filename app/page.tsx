@@ -56,7 +56,6 @@ export default function Page() {
     return () => clearInterval(id);
   }, [fetchData]);
 
-  // Summary numbers across all groups
   const totalInvestment = groups.reduce((sum, g) => sum + g.totalInvestment, 0);
   const totalPresentValue = groups.reduce((sum, g) => sum + g.totalPresentValue, 0);
   const totalGainLoss = totalPresentValue - totalInvestment;

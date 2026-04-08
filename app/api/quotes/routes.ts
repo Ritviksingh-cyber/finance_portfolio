@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import { YahooFinance } from 'yahoo-finance2';
+import yahooFinance from 'yahoo-finance2';
 import data from '@/data/portfolio.json';
 import { getYahooTicker } from '@/lib/utils';
 import { Stock } from '@/types/portfolio';
 
-const yahooFinance = new YahooFinance();
 yahooFinance.suppressNotices(['yahooSurvey']);
 
 let cache: any = null;
@@ -24,7 +23,11 @@ export async function GET() {
       const ticker = getYahooTicker(stock);
 
       try {
-        const res = await yahooFinance.quote(ticker);
+        const res = await yahooFinance.quote(
+          ticker,
+          {},
+          { validateResult: false }
+        ) as any;
 
         return {
           id: stock.id,
@@ -36,7 +39,6 @@ export async function GET() {
         console.error(`Failed for ticker ${ticker}:`, err);
         return {
           id: stock.id,
-          ticker,
           cmp: stock.fallbackCmp,
           peRatio: null,
           eps: null,
@@ -46,4 +48,12 @@ export async function GET() {
     })
   );
 
-  const cl
+  const cleaned = results
+    .map((r) => (r.status === 'fulfilled' ? r.value : null))
+    .filter(Boolean);
+
+  cache = cleaned;
+  lastTime = now;
+
+  return NextResponse.json(cleaned);
+}
