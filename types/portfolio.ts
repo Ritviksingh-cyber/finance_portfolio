@@ -14,6 +14,7 @@ export interface Stock {
   gainLossPercent?: number;
   peRatio?: number;
   eps?: number;
+  enableSorting: true,
 }
 
 export interface SectorGroup {
@@ -23,3 +24,11 @@ export interface SectorGroup {
   totalPresentValue: number;
   totalGainLoss: number;
 }
+
+const [sorting, setSorting] = useState<SortingState>([]);
+const [search, setSearch] = useState('');
+
+// Filter stocks before passing to table
+const filtered = group.stocks.filter(s =>
+  s.name.toLowerCase().includes(search.toLowerCase())
+);
