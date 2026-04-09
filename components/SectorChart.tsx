@@ -44,7 +44,7 @@ export default function SectorChart({ groups }: { groups: SectorGroup[] }) {
             innerRadius={50}
             paddingAngle={3}
             label={({ name, percent }) =>
-              `${name} ${(percent * 100).toFixed(1)}%`
+              `${name} ${((percent ?? 0) * 100).toFixed(1)}%`
             }
             labelLine={{ stroke: '#888', strokeWidth: 1 }}
           >
