@@ -1,140 +1,284 @@
-# 📈 Portfolio Dashboard
+# 📈 Portfolio Dashboard — Real-Time Indian Stock Tracker
 
-A real-time stock portfolio tracker for Indian markets (NSE/BSE), built with Next.js, TypeScript, and Tailwind CSS.
+A **production-oriented, full-stack portfolio tracking system** for Indian markets (NSE/BSE), designed to handle **real-world API constraints, rate limits, and failure scenarios** while delivering near real-time insights.
+
+---
 
 ## 🚀 Live Demo
-[Deploy link here after Vercel deployment]
+
+[http://finance-portfolio-toq4.vercel.app/]
 
 ---
 
-## 💡 Why I Built This
+## 🧠 Overview
 
-Managing a stock portfolio across NSE and BSE is painful — most free tools either don't support Indian markets or require expensive subscriptions. I wanted a single dashboard that shows all my holdings, live prices, and sector-wise performance in one place.
+Managing portfolios across NSE and BSE is fragmented and often locked behind paid tools. This project solves that by providing a **unified, real-time dashboard** with sector insights, portfolio analytics, and resilient data fetching.
 
----
-
-## ✨ Features
-
-- **Live stock prices** — fetches real-time CMP from Twelve Data API
-- **Auto-refresh every 15s** — with a visual countdown timer
-- **Sector grouping** — Financial, Technology, Consumer, Power, Others
-- **Gain/Loss tracking** — color-coded green/red per stock and per sector
-- **Portfolio allocation** — donut chart showing sector weights
-- **Summary cards** — total invested, current value, overall return %
-- **Graceful fallback** — shows last known prices if API is unavailable
-- **Export to CSV** — download your holdings data
-- **Responsive** — works on mobile and desktop
+> Designed with a **backend-first mindset**, focusing on reliability, batching, caching, and graceful degradation when working with third-party financial APIs.
 
 ---
 
-## 🛠 Tech Stack
+## ✨ Core Features
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
-| Table | @tanstack/react-table |
-| Charts | Recharts |
-| Data | Twelve Data API |
+### 📊 Portfolio Intelligence
+
+* Real-time stock prices (CMP) via Twelve Data API
+* Investment, present value, and gain/loss calculations
+* Portfolio allocation (%) with sector-level aggregation
+
+### 🔄 Live Updates
+
+* Auto-refresh every 15 seconds
+* Visual countdown timer for next update
+* Controlled polling to avoid API overuse
+
+### 🧩 Sector-Level Insights
+
+* Grouped by sectors (Financial, Tech, Consumer, Power, etc.)
+* Sector-wise investment, value, and returns
+* Donut chart for allocation visualization
+
+### 🟢 Resilient UI/UX
+
+* Gain/Loss color coding (green/red)
+* Skeleton loaders for smooth UX
+* Fully responsive (mobile + desktop)
+
+### 🛡 Failure Handling
+
+* Per-stock fallback (partial failures don’t break UI)
+* System-wide fallback (dashboard still renders on API failure)
+* Error visibility without crashing the application
+
+### 📤 Data Export
+
+* Export portfolio to CSV for offline analysis
+
+---
+
+## ⚙️ System Architecture
+
+```
+Client (Next.js UI)
+        ↓
+Backend Layer (Next.js API Routes)
+        ↓
+External Data Source (Twelve Data API)
+```
+
+### Key Responsibilities
+
+**Frontend**
+
+* Rendering portfolio + charts
+* Managing polling lifecycle
+* UI state + memoization
+
+**Backend Layer**
+
+* Batching API requests
+* Rate limiting protection
+* Response normalization
+* Server-side caching
+
+**External API**
+
+* Real-time market data (CMP)
+
+---
+
+## 🔌 Data Fetching Strategy
+
+### Why Twelve Data?
+
+* Yahoo Finance → unreliable for Indian IPs
+* Google Finance → no stable API
+
+👉 Twelve Data provides a **consistent and rate-limited free tier**
+
+---
+
+### ⚡ Optimization Techniques
+
+* **Batching**
+
+  * 26 stocks split into groups of 8 (API limit)
+
+* **Throttling**
+
+  * 500ms delay between batches to avoid rate limits
+
+* **Caching**
+
+  * 15-second server-side cache (TTL-based)
+  * Prevents redundant API calls across client refreshes
+
+* **Fallback Strategy**
+
+  * Per-ticker error isolation
+  * Last known value used when API fails
+
+---
+
+## 📊 Data Processing
+
+Raw API data is transformed into:
+
+* Investment = Price × Quantity
+* Present Value = CMP × Quantity
+* Gain/Loss = Present Value − Investment
+* Portfolio Weight (%)
+* Sector-wise aggregation
 
 ---
 
 ## 📁 Project Structure
 
+```
 portfolio-dashboard/
 ├── app/
-│   ├── api/quotes/route.ts   # backend — fetches live prices
-│   ├── page.tsx              # main dashboard page
+│   ├── api/quotes/route.ts   # Backend: batching, caching, API orchestration
+│   ├── page.tsx              # Main dashboard
 │   └── globals.css
 ├── components/
-│   ├── PortfolioTable.tsx    # holdings table with sector groups
-│   ├── SectorSection.tsx     # individual sector rows
-│   ├── SectorChart.tsx       # donut pie chart
-│   └── Skeleton.tsx          # loading state
+│   ├── PortfolioTable.tsx
+│   ├── SectorSection.tsx
+│   ├── SectorChart.tsx
+│   └── Skeleton.tsx
 ├── data/
-│   └── portfolio.json        # your stock holdings
+│   └── portfolio.json        # Static portfolio (replaceable with DB)
 ├── lib/
-│   └── utils.ts              # helpers: enrichStock, groupBySector
+│   └── utils.ts              # Data transformation logic
 └── types/
-└── portfolio.ts          # TypeScript interfaces
+    └── portfolio.ts
+```
 
+---
+
+## 🛠 Tech Stack
+
+| Layer     | Technology              |
+| --------- | ----------------------- |
+| Framework | Next.js 14 (App Router) |
+| Language  | TypeScript              |
+| Styling   | Tailwind CSS            |
+| Tables    | @tanstack/react-table   |
+| Charts    | Recharts                |
+| Data API  | Twelve Data             |
+
+---
+
+## ⚡ Performance Optimizations
+
+* Parallel API calls using batching
+* Memoization to prevent unnecessary re-renders
+* Server-side caching (TTL-based)
+* Controlled polling (15s interval)
+* Avoided recalculation during render cycles
+
+---
+
+## 🛡 Reliability & Fault Tolerance
+
+* Graceful degradation on API failures
+* Partial data rendering (no full UI crash)
+* Backend-controlled data fetching (no client exposure)
+
+> System is designed to **fail gracefully, not catastrophically**
+
+---
+
+## ⚠️ Known Limitations
+
+* **No P/E Ratio / EPS**
+
+  * Not available in Twelve Data free tier
+
+* **Market Hours Dependency**
+
+  * Updates only during NSE/BSE trading hours
+
+* **API Rate Limits**
+
+  * Free tier allows ~800 requests/day (~3.3 hours active usage)
+
+---
+
+## 🗺 Future Improvements
+
+* Redis-based distributed caching (production scale)
+* WebSocket streaming for low-latency updates
+* Historical portfolio tracking (time-series DB)
+* Alerting system (price thresholds, signals)
+* Multi-user authentication & portfolio management
+* Fundamentals data via NSE scraping or paid APIs
 
 ---
 
 ## ⚙️ Setup
 
-### 1. Clone the repo
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/yourusername/portfolio-dashboard.git
 cd portfolio-dashboard
 ```
 
-### 2. Install dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Get a free API key
+### 3. Add API Key
 
-Sign up at [twelvedata.com](https://twelvedata.com/register) — free tier gives 800 requests/day, enough for live updates during market hours.
+Create `.env.local`:
 
-### 4. Add your API key
+```env
+TWELVE_DATA_API_KEY=your_api_key_here
+```
 
-Create `.env.local` in the project root:
-TWELVE_DATA_API_KEY=your_key_here
-
-
-### 5. Run locally
+### 4. Run Locally
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
-
 ---
 
-## 🔌 API Strategy
-
-Yahoo Finance has no official public API. I initially tried the `yahoo-finance2` npm package but hit consistent rate limiting from Indian IPs. Switched to **Twelve Data** which provides a reliable free tier for Indian market data.
-
-**Key decisions:**
-- **Batching** — 26 stocks split into groups of 8 (free tier limit per request)
-- **500ms delay** between batches to avoid rate limiting
-- **15s server-side cache** — prevents API hammering on every client refresh
-- **Per-ticker fallback** — if one stock fails, others still load correctly
-- **NSE format** — `NSE:HDFCBANK`, BSE format — `BSE:532174`
-
----
-
-## ⚠️ Known Limitations
-
-- **P/E Ratio and EPS** — Twelve Data free tier doesn't include fundamentals. Currently shown as `—`. Would require a paid plan or direct NSE scraping.
-- **Market hours** — prices only update during NSE/BSE trading hours (9:15 AM – 3:30 PM IST). Outside hours, last traded price is shown.
-- **Free tier limits** — 800 API calls/day. At one refresh per 15 seconds, this covers ~3.3 hours of active use per day.
-
----
-
-## 🗺 What I'd Add Next
-
-- [ ] Per-stock price history chart (click to expand)
-- [ ] WebSockets for true real-time updates instead of polling
-- [ ] P/E and EPS via NSE website scraping
-- [ ] Redis cache (survives server restarts, better for production)
-- [ ] Alert when a stock crosses a target price
-
----
-
-## 🚀 Deploy to Vercel
+## 🚀 Deployment
 
 ```bash
 npm install -g vercel
 vercel
 ```
 
-Add `TWELVE_DATA_API_KEY` in your Vercel project's Environment Variables settings.
+Add environment variable in Vercel:
+
+```
+TWELVE_DATA_API_KEY
+```
 
 ---
+
+## 🧠 Engineering Highlights
+
+* Designed for **real-world API instability**
+* Optimized for **rate-limited environments**
+* Focused on **failure resilience over ideal conditions**
+* Built with a **scalable backend mindset**, not just UI rendering
+
+---
+
+## 📌 Final Note
+
+This project is not just a dashboard—it is a **resilient financial data system** that demonstrates:
+
+* API orchestration
+* Fault tolerance
+* Performance optimization
+* Production-oriented thinking
+
+---
+
+## ⭐ If you found this useful, consider starring the repo!
